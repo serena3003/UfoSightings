@@ -36,6 +36,7 @@ public class UfoController {
     @FXML
     void handleAnalizza(ActionEvent event) {
     	String state = boxStato.getValue();
+    	txtResult.clear();
     	txtResult.appendText("I precedenti di "+ state +" sono:\n");
     	List<String> precedenti = model.getPrecedenti(state);
     	for(String p : precedenti) {
@@ -48,7 +49,9 @@ public class UfoController {
     	}
     	txtResult.appendText("\nI raggiungibili di "+ state +" sono:\n");
     	List<String> raggiungibili = model.getRaggiungibili(state);
-
+    	for(String sR : raggiungibili) {
+    		txtResult.appendText(sR.toString()+"\n");	
+    	}
     }
 
     @FXML
@@ -58,12 +61,18 @@ public class UfoController {
     	
     	model.creaGrafo(Integer.parseInt(sp[0]));
     	boxStato.getItems().addAll(model.getVertici());
+    	txtResult.appendText("Grafo creato con "+model.getGrafo().vertexSet().size()+" vertici e " + model.getGrafo().edgeSet().size()+ " archi.");
     }
 
     @FXML
     void handleSequenza(ActionEvent event) {
-    	
-    	/**/
+    	String state = boxStato.getValue();
+    	txtResult.clear();
+    	txtResult.appendText("Il percorso degli alieni è: \n");
+    	List<String> percorso = model.getPercorso(state);
+    	for(String s : percorso) {
+    		txtResult.appendText(s.toString()+"\n");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

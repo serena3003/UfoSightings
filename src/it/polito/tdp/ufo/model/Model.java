@@ -19,7 +19,8 @@ public class Model {
 	private SightingsDAO dao;
 	private Graph<String, DefaultEdge> grafo;
 	private Map<Integer, Sighting> sightingMap;
-
+	private List<String> soluzioneRicorsiva;
+	private int lunghezzaMax;
 	
 	public Model() {
 		dao = new SightingsDAO();
@@ -42,7 +43,6 @@ public class Model {
 		
 		
 		for(Sighting s : sightingList) {
-			//if(grafo.containsVertex(s.getState())) {
 			for(Sighting s1 : sightingList) {
 				if(!s1.getState().equals(s.getState())) {
 					if(s1.getDatetime().isBefore(s.getDatetime())) {
@@ -53,7 +53,6 @@ public class Model {
 					}
 				}
 			}
-		//}
 		}
 	}
 
@@ -92,10 +91,9 @@ public class Model {
 	}
 
 	public List<String> getRaggiungibili(String state) {
-		List<String> result = new ArrayList<String>();
-		List<String> predecessori = getPrecedenti(state);
 		List<String> successori = getSuccessivi(state);
-		for(String succ : successori) {
+		List<String> result =  new ArrayList<String>(successori); // tutti i successori sono raggiungibili
+		for(String succ : successori) { 			
 			List<String> succList = getSuccessivi(succ);
 			for(String s : succList) {
 				if(!result.contains(s) && !s.equals(state)) {
@@ -103,15 +101,32 @@ public class Model {
 				}
 			}
 		}
-		
-		for(String prec : predecessori) {
-			List<String> precList = getPrecedenti(prec);
-			for(String p : precList) {
-				if(!result.contains(p)&& !p.equals(state)) {
-					result.add(p);
-				}
-			}
-		}
 		return result;
+	}
+
+	public List<String> getPercorso(String state) {
+		soluzioneRicorsiva = new ArrayList<String>();
+		List<String> parziale = new ArrayList<String>();
+		parziale.add(state);
+		lunghezzaMax = parziale.size();
+		cerca(parziale, state);
+		return soluzioneRicorsiva;
+	}
+
+	private void cerca(List<String> parziale, String state) {
+		
+		if(lunghezzaMax<=parziale.size()) {
+			lunghezzaMax=parziale.size();
+			soluzioneRicorsiva = new ArrayList<String>(parziale);
+		}
+		List<String> successivi = getSuccessivi(state);
+		for(String s : successivi) {
+			if(!parziale.contains(s)) {
+				parziale.add(s);
+				cerca(parziale, s);
+				parziale.remove(s);
+			}
+			
+		}
 	}
 }
