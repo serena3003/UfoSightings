@@ -1,8 +1,11 @@
 package it.polito.tdp.ufo.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -39,6 +42,7 @@ public class Model {
 		
 		
 		for(Sighting s : sightingList) {
+			//if(grafo.containsVertex(s.getState())) {
 			for(Sighting s1 : sightingList) {
 				if(!s1.getState().equals(s.getState())) {
 					if(s1.getDatetime().isBefore(s.getDatetime())) {
@@ -49,6 +53,7 @@ public class Model {
 					}
 				}
 			}
+		//}
 		}
 	}
 
@@ -60,5 +65,53 @@ public class Model {
 		return sightingMap;
 	}
 	
+	public List<String> getVertici(){
+		List<String> result = new ArrayList<>(grafo.vertexSet());
+		Collections.sort(result);
+		return result;
+	}
+
+	public List<String> getPrecedenti(String state) {
+		List<String> result = new ArrayList<String>();
+		for(DefaultEdge e : grafo.edgesOf(state)) {
+			String source = grafo.getEdgeSource(e);
+			if(!source.equals(state))
+				result.add(source);
+		}
+		return result;
+	}
 	
+	public List<String> getSuccessivi(String state) {
+		List<String> result = new ArrayList<String>();
+		for(DefaultEdge e : grafo.edgesOf(state)) {
+			String target = grafo.getEdgeTarget(e);
+			if(!target.equals(state))
+				result.add(target);
+		}
+		return result;
+	}
+
+	public List<String> getRaggiungibili(String state) {
+		List<String> result = new ArrayList<String>();
+		List<String> predecessori = getPrecedenti(state);
+		List<String> successori = getSuccessivi(state);
+		for(String succ : successori) {
+			List<String> succList = getSuccessivi(succ);
+			for(String s : succList) {
+				if(!result.contains(s) && !s.equals(state)) {
+					result.add(s);
+				}
+			}
+		}
+		
+		for(String prec : predecessori) {
+			List<String> precList = getPrecedenti(prec);
+			for(String p : precList) {
+				if(!result.contains(p)&& !p.equals(state)) {
+					result.add(p);
+				}
+			}
+		}
+		return result;
+	}
 }

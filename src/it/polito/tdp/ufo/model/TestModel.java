@@ -1,13 +1,30 @@
 package it.polito.tdp.ufo.model;
 
+import java.util.List;
+
 public class TestModel {
 
 	public static void main(String[] args) {
 		Model model = new Model();
-		model.creaGrafo(1949);
+		model.creaGrafo(1947);
 		System.out.println("Grafo creato. Vertici: " + model.getGrafo().vertexSet().size() + " e archi " + model.getGrafo().edgeSet().size());
 		System.out.println("\n----------\n");
 		System.out.println(model.getGrafo().toString());
+		
+		List<String> stateS = model.getSuccessivi("tx");
+		System.out.println("----SUCCESSORI\n");
+		for(String s : stateS)
+			System.out.println(s.toString());
+		
+		List<String> stateP = model.getPrecedenti("tx");
+		System.out.println("-----PRECEDENTI\n");
+		for(String s : stateP)
+			System.out.println(s.toString());
+		
+		List<String> stateR = model.getRaggiungibili("tx");
+		System.out.println("----RAGGIUNGIBILI\n");
+		for(String s : stateR)
+			System.out.println(s.toString());
 
 	}
 
